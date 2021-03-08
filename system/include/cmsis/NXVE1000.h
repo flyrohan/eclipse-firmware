@@ -72,28 +72,12 @@ typedef enum IRQn
 {
 /******  Cortex-M# Processor Exceptions Numbers ***************************************************/
 
-#if defined(__ARM_ARCH_6M__)
-
 /* ToDo: use this Cortex interrupt numbers if your device is a CORTEX-M0 device                   */
   NonMaskableInt_IRQn           = -14,      /*!<  2 Non Maskable Interrupt                        */
   HardFault_IRQn                = -13,      /*!<  3 Hard Fault Interrupt                          */
   SVCall_IRQn                   = -5,       /*!< 11 SV Call Interrupt                             */
   PendSV_IRQn                   = -2,       /*!< 14 Pend SV Interrupt                             */
   SysTick_IRQn                  = -1,       /*!< 15 System Tick Interrupt                         */
-
-#elif defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-
-/* ToDo: use this Cortex interrupt numbers if your device is a CORTEX-M3 / Cortex-M4 device       */
-  NonMaskableInt_IRQn           = -14,      /*!<  2 Non Maskable Interrupt                        */
-  MemoryManagement_IRQn         = -12,      /*!<  4 Memory Management Interrupt                   */
-  BusFault_IRQn                 = -11,      /*!<  5 Bus Fault Interrupt                           */
-  UsageFault_IRQn               = -10,      /*!<  6 Usage Fault Interrupt                         */
-  SVCall_IRQn                   = -5,       /*!< 11 SV Call Interrupt                             */
-  DebugMonitor_IRQn             = -4,       /*!< 12 Debug Monitor Interrupt                       */
-  PendSV_IRQn                   = -2,       /*!< 14 Pend SV Interrupt                             */
-  SysTick_IRQn                  = -1,       /*!< 15 System Tick Interrupt                         */
-
-#endif
 
 /******  Device Specific Interrupt Numbers ********************************************************/
 /* ToDo: add here your device specific external interrupt numbers
@@ -116,14 +100,7 @@ typedef enum IRQn
          __CM3_REV if your device is a CORTEX-M3 device
          __CM4_REV if your device is a CORTEX-M4 device                                           */
 //#define __CM#_REV                 0x0201    /*!< Core Revision r2p1                               */
-#if defined(__ARM_ARCH_6M__)
 #define __CM0_REV                 0x0201
-#elif defined(__ARM_ARCH_7M__)
-#define __CM3_REV                 0x0201
-#elif defined(__ARM_ARCH_7EM__)
-#define __CM4_REV                 0x0201
-#endif
-
 #define __NVIC_PRIO_BITS          2         /*!< Number of Bits used for Priority Levels          */
 #define __Vendor_SysTickConfig    0         /*!< Set to 1 if different SysTick Config is used     */
 #define __MPU_PRESENT             0         /*!< MPU present or not                               */
@@ -139,13 +116,7 @@ typedef enum IRQn
          core_cm4.h if your device is a CORTEX-M4 device                                          */
 
 //#include <core_cm#.h>                       /* Cortex-M# processor and core peripherals           */
-#if defined(__ARM_ARCH_6M__)
 #include <core_cm0.h>
-#elif defined(__ARM_ARCH_7M__)
-#include <core_cm3.h>
-#elif defined(__ARM_ARCH_7EM__)
-#include <core_cm4.h>
-#endif
 
 /* ToDo: include your system_<Device>.h file
          replace '<Device>' with your device name                                                 */

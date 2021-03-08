@@ -53,6 +53,8 @@ extern "C" {
 #include <uart.h>
 #include <gpio.h>
 
+#define SYS_TICK_HZ		1000
+
 extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
 
 
