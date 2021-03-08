@@ -127,10 +127,10 @@ static void PLL_Change_PMS(PLLPMS *pms)
 	 __enable_irq();
 }
 
-uint32_t PLL_Change_HZ(uint32_t hz)
+uint32_t PLL_SetFrequency(uint32_t frequency)
 {
 	for (int i = 0; i < PLL_HZ_NONE; i++) {
-		if (pms_table[i].hz == hz) {
+		if (pms_table[i].hz == frequency) {
 			PLL_Change_PMS(&pms_table[i]);
 			return pms_table[i].hz;
 		}
