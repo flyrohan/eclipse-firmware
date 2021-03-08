@@ -30,10 +30,6 @@
 
 #include <stdint.h>
 
-#if defined(DEBUG)
-#define __DEBUG_BKPT()  asm volatile ("bkpt 0")
-#endif
-
 // ----------------------------------------------------------------------------
 
 #if defined(__cplusplus)
@@ -70,13 +66,6 @@ extern "C"
     uint32_t pc;
     uint32_t psr;
   } ExceptionStackFrame;
-
-#if defined(TRACE)
-#if defined(__ARM_ARCH_6M__)
-  void
-  dumpExceptionStack (ExceptionStackFrame* frame, uint32_t lr);
-#endif // defined(__ARM_ARCH_6M__)
-#endif // defined(TRACE)
 
   void
   HardFault_Handler_C (ExceptionStackFrame* frame, uint32_t lr);
