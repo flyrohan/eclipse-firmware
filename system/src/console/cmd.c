@@ -14,14 +14,14 @@
 
 #define CMD_ENTRY_START \
 ({ \
-        static char _start[0] __aligned(4) __attribute__((unused, section(".cmd_entry_1"))); \
-        (CMD_Entry *)&_start; \
+        static char _cmd_start[0] __aligned(4) __attribute__((unused, section(".cmd_entry_1"))); \
+        (CMD_Entry *)&_cmd_start; \
 })
 
 #define CMD_ENTRY_END \
 ({ \
-        static char _end[0] __aligned(4) __attribute__((unused, section(".cmd_entry_3"))); \
-        (CMD_Entry *)&_end; \
+        static char _cmd_end[0] __aligned(4) __attribute__((unused, section(".cmd_entry_3"))); \
+        (CMD_Entry *)&_cmd_end; \
 })
 
 #define isblank(c)      (c == ' ' || c == '\t')
