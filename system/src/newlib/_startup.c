@@ -143,10 +143,6 @@ extern void
 (*__init_array_start[]) (void) __attribute__((weak));
 extern void
 (*__init_array_end[]) (void) __attribute__((weak));
-extern void
-(*__fini_array_start[]) (void) __attribute__((weak));
-extern void
-(*__fini_array_end[]) (void) __attribute__((weak));
 
 // Iterate over all the preinit/init routines (mainly static constructors).
 inline void
@@ -168,24 +164,6 @@ __run_init_array (void)
   count = __init_array_end - __init_array_start;
   for (i = 0; i < count; i++)
     __init_array_start[i] ();
-}
-
-// Run all the cleanup routines (mainly static destructors).
-inline void
-__attribute__((always_inline))
-__run_fini_array (void)
-{
-  int count;
-  int i;
-
-  count = __fini_array_end - __fini_array_start;
-  for (i = count; i > 0; i--)
-    __fini_array_start[i - 1] ();
-
-  // If you need to run the code in the .fini section, please use
-  // the startup files, since this requires the code in crti.o and crtn.o
-  // to add the function prologue/epilogue.
-  //_fini(); // DO NOT ENABE THIS!
 }
 
 #if defined(DEBUG) && (OS_INCLUDE_STARTUP_GUARD_CHECKS)
@@ -272,6 +250,10 @@ _start (void)
   // Hook to continue the initialisations. Usually compute and store the
   // clock frequency in the global CMSIS variable, cleared above.
   __initialize_hardware ();
+
+  // Call the standard library initialisation (mandatory for C++ to
+  // execute the constructors for the static objects).
+  __run_init_array ();
 
   // Call the main entry point, and save the exit code.
   int code = main ();
