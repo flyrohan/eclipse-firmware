@@ -28,12 +28,29 @@
 // ----------------------------------------------------------------------------
 
 #include <cmsis_device.h>
+#include <system.h>
+#include <init.h>
 #include <config.h>
 
-int main (void)
-{
-	Printf("\r\n\r\n***** FIRMWARE *****\r\n\r\n");
-	CLI_RunLoop();
+#define GPIO_UART_TX	24
+#define GPIO_UART_RX	25
 
-	return 0;
+#ifdef HAL_INIT
+
+static void SYS_GpioInit(void)
+{
+	GPIO_SetAlt(GPIO_UART_TX, GPIO_ALTFUNC_1);
+	GPIO_SetAlt(GPIO_UART_RX, GPIO_ALTFUNC_1);
 }
+
+static void HAL_SystemInit(void)
+{
+	System_Remap();
+	PLL_SetFrequency(SYSTEM_CLOCK);
+	SysTick_Init(SYS_TICK_HZ);
+
+	SYS_GpioInit();
+	UART_ConsoleInit(0, SYSTEM_CLOCK);
+}
+SYSTEM_INIT(HAL_SystemInit);
+#endif
