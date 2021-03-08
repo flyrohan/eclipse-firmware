@@ -26,6 +26,7 @@
  */
 
 #include <cmsis_device.h>
+#include <ExceptionHandlers.h>
 #include <config.h>
 #include <init.h>
 
@@ -41,11 +42,6 @@ void SysTick_Delay(int ticks)
   }
 }
 
-uint64_t SysTick_GetCounter(void)
-{
-	return 0;
-}
-
 uint64_t SysTick_GetTick(void)
 {
 	return systick_count + SysTick->VAL;
@@ -54,7 +50,7 @@ uint64_t SysTick_GetTick(void)
 /* This function is called by the SysTick overflow interrupt handler. The
 * address of this function must appear in the SysTick entry of the vector
 * table. */
-void HAL_SysTick_Handler(void)
+void SysTick_Handler(void)
 {
 	systick_count++;
 }
