@@ -50,17 +50,6 @@ extern "C"
   extern void
   HardFault_Handler (void);
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-  extern void
-  MemManage_Handler (void);
-  extern void
-  BusFault_Handler (void);
-  extern void
-  UsageFault_Handler (void);
-  extern void
-  DebugMon_Handler (void);
-#endif
-
   extern void
   SVC_Handler (void);
 
@@ -80,17 +69,9 @@ extern "C"
     uint32_t lr;
     uint32_t pc;
     uint32_t psr;
-#if  defined(__ARM_ARCH_7EM__)
-    uint32_t s[16];
-#endif
   } ExceptionStackFrame;
 
 #if defined(TRACE)
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-  void
-  dumpExceptionStack (ExceptionStackFrame* frame, uint32_t cfsr, uint32_t mmfar,
-                      uint32_t bfar, uint32_t lr);
-#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #if defined(__ARM_ARCH_6M__)
   void
   dumpExceptionStack (ExceptionStackFrame* frame, uint32_t lr);
@@ -99,13 +80,6 @@ extern "C"
 
   void
   HardFault_Handler_C (ExceptionStackFrame* frame, uint32_t lr);
-
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-  void
-  UsageFault_Handler_C (ExceptionStackFrame* frame, uint32_t lr);
-  void
-  BusFault_Handler_C (ExceptionStackFrame* frame, uint32_t lr);
-#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined(__cplusplus)
 }
