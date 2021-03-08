@@ -53,7 +53,8 @@ static int CLI_ReadLine(const char *const prompt, char *buffer)
 		case '\r':			/* Enter */
 		case '\n':
 			*p = '\0';
-			Puts("\r\n");
+			Puts("\r");
+			Puts("\n");
 			return p - p_buf;
 
 		case '\0':			/* nul */
@@ -61,7 +62,8 @@ static int CLI_ReadLine(const char *const prompt, char *buffer)
 
 		case 0x03:			/* ^C - break */
 			p_buf[0] = '\0';	/* discard input */
-			Puts("\r\n");
+			Puts("\r");
+			Puts("\n");
 			return -1;
 
 		case 0x08:			/* ^H  - backspace */
