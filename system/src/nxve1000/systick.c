@@ -31,33 +31,39 @@
 #include <init.h>
 
 #ifdef SYSTICK_ENABLED
-static volatile unsigned int systick_count = 0;
+static uint64_t systick_count = 0;
+static uint32_t systick_inc_hz, systick_ratio_us;
 
-void SysTick_Delay(int ticks)
+void SysTick_Delay(int us)
 {
-  uint64_t stick = SysTick_GetTick();
+	uint64_t s_us = SysTick_GetTick();
 
-  while((SysTick_GetTick() - stick) < (uint64_t)ticks) {
-	  ;
-  }
+	while (1) {
+		uint64_t c_us = SysTick_GetTick();
+
+		if (c_us < s_us)
+			continue;
+		if ((c_us - s_us) >= (uint64_t)us)
+			break;
+	};
 }
 
 uint64_t SysTick_GetTick(void)
 {
-	return systick_count + SysTick->VAL;
+	return systick_count + (uint64_t)(SysTick->VAL / systick_ratio_us);
 }
 
-/* This function is called by the SysTick overflow interrupt handler. The
-* address of this function must appear in the SysTick entry of the vector
-* table. */
 void SysTick_Handler(void)
 {
-	systick_count++;
+	systick_count += systick_inc_hz;
 }
 
 void SysTick_Init(int hz)
 {
-	SysTick_Config(SystemCoreClock / (uint32_t)hz);
+	systick_inc_hz = (uint32_t)hz;
+	systick_ratio_us = SYSTEM_CLOCK / (uint32_t)(hz * hz);
+
+	SysTick_Config(SYSTEM_CLOCK / (uint32_t)hz);
 }
 
 #endif
