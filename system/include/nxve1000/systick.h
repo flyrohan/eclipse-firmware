@@ -6,8 +6,8 @@
 uint64_t SysTick_GetTick(void);
 void SysTick_Delay (int ticks);
 uint64_t SysTick_GetCounter(void);
-void SysTick_Init(void);
+void SysTick_Init(int hz);
 
-void SysTick_ISRHandler(void);
+void HAL_SysTick_Handler(void);
 
 #endif

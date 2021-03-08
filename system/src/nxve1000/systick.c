@@ -27,11 +27,9 @@
 
 #include <cmsis_device.h>
 #include <config.h>
+#include <init.h>
 
-#ifndef SYSTICK_HZ
-#define SYSTICK_HZ		1000
-#endif
-
+#ifdef SYSTICK_ENABLED
 static volatile unsigned int systick_count = 0;
 
 void SysTick_Delay(int ticks)
@@ -50,22 +48,20 @@ uint64_t SysTick_GetCounter(void)
 
 uint64_t SysTick_GetTick(void)
 {
-	return systick_count;
+	return systick_count + SysTick->VAL;
 }
-
-
-
-void SysTick_Init(void)
-{
-	SysTick_Config(SystemCoreClock / SYSTICK_HZ);
-}
-
 
 /* This function is called by the SysTick overflow interrupt handler. The
 * address of this function must appear in the SysTick entry of the vector
 * table. */
-void SysTick_ISRHandler(void)
+void HAL_SysTick_Handler(void)
 {
 	systick_count++;
 }
 
+void SysTick_Init(int hz)
+{
+	SysTick_Config(SystemCoreClock / (uint32_t)hz);
+}
+
+#endif
