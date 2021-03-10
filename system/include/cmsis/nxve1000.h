@@ -43,17 +43,6 @@
  extern "C" {
 #endif
 
-/* ToDo: replace '<Device>' with your device name; add your doxyGen comment   */
-/** @addtogroup <Device>_Definitions <Device> Definitions
-  This file defines all structures and symbols for <Device>:
-    - registers and bitfields
-    - peripheral base address
-    - peripheral ID
-    - Peripheral definitions
-  @{
-*/
-
-
 /******************************************************************************/
 /*                Processor and Core Peripherals                              */
 /******************************************************************************/
@@ -61,6 +50,13 @@
   Configuration of the Cortex-M# Processor and Core Peripherals
   @{
 */
+#define	CMU_PHY_BASE			(0x43150200)
+#define	PLL_PHY_BASE			(0x43140000)
+#define	ALIVE_FSM_PHY_BASE		(0x43161000)
+#define SYSREG_PHY_BASE			(0x42020000)
+#define	TIMER_PHY_BASE			(0x430A0000)
+#define GPIO_PHY_BASE			(0x42000000)
+#define	UART_PHY_BASE			(0x43050000)
 
 /*
  * ==========================================================================
@@ -121,98 +117,6 @@ typedef enum IRQn
 /* ToDo: include your system_<Device>.h file
          replace '<Device>' with your device name                                                 */
 #include <system_nxve1000.h>                /* <Device> System  include file                      */
-
-
-/******************************************************************************/
-/*                Device Specific Peripheral registers structures             */
-/******************************************************************************/
-/** @addtogroup <Device>_Peripherals <Device> Peripherals
-  <Device> Device Specific Peripheral registers structures
-  @{
-*/
-
-#if defined ( __CC_ARM   )
-#pragma anon_unions
-#endif
-
-/* ToDo: add here your device specific peripheral access structure typedefs
-         following is an example for a timer                                  */
-
-/*------------- 16-bit Timer/Event Counter (TMR) -----------------------------*/
-/** @addtogroup <Device>_TMR <Device> 16-bit Timer/Event Counter (TMR)
-  @{
-*/
-typedef struct
-{
-  __IO uint32_t EN;                         /*!< Offset: 0x0000   Timer Enable Register           */
-  __IO uint32_t RUN;                        /*!< Offset: 0x0004   Timer RUN Register              */
-  __IO uint32_t CR;                         /*!< Offset: 0x0008   Timer Control Register          */
-  __IO uint32_t MOD;                        /*!< Offset: 0x000C   Timer Mode Register             */
-       uint32_t RESERVED0[1];
-  __IO uint32_t ST;                         /*!< Offset: 0x0014   Timer Status Register           */
-  __IO uint32_t IM;                         /*!< Offset: 0x0018   Interrupt Mask Register         */
-  __IO uint32_t UC;                         /*!< Offset: 0x001C   Timer Up Counter Register       */
-  __IO uint32_t RG0;                        /*!< Offset: 0x0020   Timer Register                  */
-       uint32_t RESERVED1[2];
-  __IO uint32_t CP;                         /*!< Offset: 0x002C   Capture register                */
-} DeviceAbbreviation_TMR_TypeDef;
-/*@}*/ /* end of group <Device>_TMR */
-
-
-#if defined ( __CC_ARM   )
-#pragma no_anon_unions
-#endif
-
-/*@}*/ /* end of group <Device>_Peripherals */
-
-
-/******************************************************************************/
-/*                         Peripheral memory map                              */
-/******************************************************************************/
-/* ToDo: add here your device peripherals base addresses
-         following is an example for timer                                    */
-/** @addtogroup <Device>_MemoryMap <Device> Memory Mapping
-  @{
-*/
-
-/* Peripheral and SRAM base address */
-#define DeviceAbbreviation_FLASH_BASE       (0x00000000UL)                              /*!< (FLASH     ) Base Address */
-#define DeviceAbbreviation_SRAM_BASE        (0x20000000UL)                              /*!< (SRAM      ) Base Address */
-#define DeviceAbbreviation_PERIPH_BASE      (0x40000000UL)                              /*!< (Peripheral) Base Address */
-
-/* Peripheral memory map */
-#define DeviceAbbreviationTIM0_BASE         (DeviceAbbreviation_PERIPH_BASE)          /*!< (Timer0    ) Base Address */
-#define DeviceAbbreviationTIM1_BASE         (DeviceAbbreviation_PERIPH_BASE + 0x0800) /*!< (Timer1    ) Base Address */
-#define DeviceAbbreviationTIM2_BASE         (DeviceAbbreviation_PERIPH_BASE + 0x1000) /*!< (Timer2    ) Base Address */
-/*@}*/ /* end of group <Device>_MemoryMap */
-
-
-/******************************************************************************/
-/*                         Peripheral declaration                             */
-/******************************************************************************/
-/* ToDo: add here your device peripherals pointer definitions
-         following is an example for timer                                    */
-
-/** @addtogroup <Device>_PeripheralDecl <Device> Peripheral Declaration
-  @{
-*/
-
-#define DeviceAbbreviation_TIM0        ((DeviceAbbreviation_TMR_TypeDef *) DeviceAbbreviationTIM0_BASE)
-#define DeviceAbbreviation_TIM1        ((DeviceAbbreviation_TMR_TypeDef *) DeviceAbbreviationTIM0_BASE)
-#define DeviceAbbreviation_TIM2        ((DeviceAbbreviation_TMR_TypeDef *) DeviceAbbreviationTIM0_BASE)
-/*@}*/ /* end of group <Device>_PeripheralDecl */
-
-/******************************************************************************/
-/*                         Peripheral declaration                             */
-/******************************************************************************/
-#define	CMU_PHY_BASE			(0x43150200)
-#define	PLL_PHY_BASE			(0x43140000)
-#define	ALIVE_FSM_PHY_BASE		(0x43161000)
-#define SYSREG_PHY_BASE			(0x42020000)
-#define	TIMER_PHY_BASE			(0x430A0000)
-#define GPIO_PHY_BASE			(0x42000000)
-#define	UART_PHY_BASE			(0x43050000)
-/*@}*/ /* end of group <Device>_PeripheralDecl */
 
 #ifdef __cplusplus
 }
