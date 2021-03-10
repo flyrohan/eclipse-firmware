@@ -350,13 +350,15 @@
 #ifndef __DHRY__
 #define __DHRY_
 
-#define __FIRMWARE__
+#include <config.h>
 
-#ifdef __FIRMWARE__
+#ifdef DMIPS_ENABLED
+
+#define __FIRMWARE__
+#ifdef  __FIRMWARE__
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <config.h>
 
 #define MSC_CLOCK
 #define REG register
@@ -477,5 +479,6 @@ void Proc_8(Arr_1_Dim, Arr_2_Dim, int, int);
 
 Boolean Func_2(Str_30, Str_30);
 Boolean Func_3(Enumeration);
+#endif
 #endif
 #endif

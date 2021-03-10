@@ -311,7 +311,7 @@ long DMIPS = (long)((Dhrystones_Per_Second/1757) * 1000);
  printf ("Dhrystones per Second: ");
  printf ("%ld \n", round(Dhrystones_Per_Second));
  printf("DMIPS: %d.%03d \n", DMIPS/1000, DMIPS%1000);
- printf("DMIPS/MHz: %d.%03d \n", (DMIPS/cpu_mhz)/1000, (DMIPS/cpu_mhz)%1000);
+ printf("DMIPS/MHz: %d.%03d, CPU %d MHZ \n", (DMIPS/cpu_mhz)/1000, (DMIPS/cpu_mhz)%1000, cpu_mhz);
 #endif
  printf ("\n");
  }
