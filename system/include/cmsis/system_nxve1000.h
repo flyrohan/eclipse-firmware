@@ -44,8 +44,9 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <systick.h>
 #include <pll.h>
+#include <systick.h>
+#include <timer.h>
 #include <console.h>
 #include <cli.h>
 #include <cmd.h>

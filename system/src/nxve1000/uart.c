@@ -13,9 +13,7 @@
 #define UART_BAUDRATE		115200
 #endif
 
-#define	UART_BASE_CH0		0x43050000
-#define	UART_BASE_CH1		0x43060000
-
+#define	UART_PHY_OFFSET		0x60000
 #define	UART_REG_RBR		0x00
 #define	UART_REG_IER		0x04
 #define	UART_REG_FCR		0x08
@@ -87,7 +85,7 @@
 }                           \
 )
 
-static void *uart_handle;
+static void *uart_handle = (void *)UART_PHY_BASE;
 
 static void serial_out(int c, uint32_t offset)
 {
@@ -141,7 +139,8 @@ static void UART_SetBaudRate(unsigned int clock, unsigned int baudrate)
 
 void UART_Init(int ch, unsigned int clock)
 {
-	uart_handle = (void *)(ch == 1 ? UART_BASE_CH1 : UART_BASE_CH0);
+	if (ch == 1)
+		uart_handle = (void *)(UART_PHY_BASE + UART_PHY_OFFSET);
 
 	while (!(serial_in(UART_REG_LSR) & UART_LSR_TEMT))
 		;

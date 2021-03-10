@@ -202,7 +202,17 @@ typedef struct
 #define DeviceAbbreviation_TIM2        ((DeviceAbbreviation_TMR_TypeDef *) DeviceAbbreviationTIM0_BASE)
 /*@}*/ /* end of group <Device>_PeripheralDecl */
 
-/*@}*/ /* end of group <Device>_Definitions */
+/******************************************************************************/
+/*                         Peripheral declaration                             */
+/******************************************************************************/
+#define	CMU_PHY_BASE			(0x43150200)
+#define	PLL_PHY_BASE			(0x43140000)
+#define	ALIVE_FSM_PHY_BASE		(0x43161000)
+#define SYSREG_PHY_BASE			(0x42020000)
+#define	TIMER_PHY_BASE			(0x430A0000)
+#define GPIO_PHY_BASE			(0x42000000)
+#define	UART_PHY_BASE			(0x43050000)
+/*@}*/ /* end of group <Device>_PeripheralDecl */
 
 #ifdef __cplusplus
 }
