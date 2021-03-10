@@ -10,9 +10,6 @@
 #define FMTFLG_MINUS    0x08    /*!< \brief Set to force left justification */
 #define FMTFLG_CAPITAL  0x10    /*!< \brief Set for capital letter digits */
 
-static unsigned char large[] = "0123456789ABCDEF";
-static unsigned char small[] = "0123456789abcdef";
-
 /*
  * Write a buffer to the debug output.
  */
@@ -38,6 +35,8 @@ static int PrintNumeric(unsigned long val, unsigned char radix, int width, unsig
 	unsigned char raw[16];
 	unsigned char rem, sign;
 	int result, cnt;
+	unsigned char large[] = "0123456789ABCDEF";
+	unsigned char small[] = "0123456789abcdef";
 
 	if(radix < 2)
 	    radix = 10;
@@ -115,17 +114,14 @@ static int PrintNumeric(unsigned long val, unsigned char radix, int width, unsig
 int Printf(const char *fmt, ...)
 {
     va_list ap;
-    unsigned char *s;
-    unsigned char *cp;
-    int width;
-    int result;
-    unsigned short len;
+    unsigned char *s, *cp;
+    int width, result, len;
     unsigned long val;
-    unsigned char radix;
-    unsigned char flags;
+    unsigned char radix, flags;
     char isize;
 
     va_start(ap, fmt);
+
     for(result = 0; *fmt; ++fmt) {
         if(*fmt != '%') {
             if(PrintOutput(fmt, 1) < 0)
@@ -228,6 +224,7 @@ int Printf(const char *fmt, ...)
                 fmt--;
             continue;
         }
+
         if(isize == 'l') {
             if(flags & FMTFLG_SIGNED)
                 val = (unsigned long)va_arg(ap, long);
@@ -242,6 +239,7 @@ int Printf(const char *fmt, ...)
         }
         result += PrintNumeric(val, radix, width, flags);
     }
+
     va_end(ap);
 
     return result;
