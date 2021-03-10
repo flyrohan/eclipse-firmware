@@ -31,39 +31,64 @@
 #include <init.h>
 
 #ifdef SYSTICK_ENABLED
-static uint64_t systick_count = 0;
-static uint32_t systick_inc_hz, systick_ratio_us;
+
+static struct __attribute__((__packed__)) _SYSTICK_ {
+	uint64_t timestamp;
+	uint32_t hz;
+	uint32_t ratio;
+	uint32_t lastdec;
+} _systick = {
+	.timestamp = 0,
+};
 
 void SysTick_Delay(int us)
 {
-	uint64_t s_us = SysTick_GetTick();
+	uint64_t start = SysTick_GetTick();
 
 	while (1) {
-		uint64_t c_us = SysTick_GetTick();
+		uint64_t curr = SysTick_GetTick();
 
-		if (c_us < s_us)
+		if (curr < start)
 			continue;
-		if ((c_us - s_us) >= (uint64_t)us)
+
+		if ((curr - start) >= (uint64_t)us)
 			break;
 	};
 }
 
 uint64_t SysTick_GetTick(void)
 {
-	return systick_count + (uint64_t)(SysTick->VAL / systick_ratio_us);
+	uint64_t time;
+	uint32_t tick;
+
+	tick = SysTick->VAL;
+	__ISB();
+	time = _systick.timestamp;
+
+	return time + (uint64_t)(tick / _systick.ratio);
 }
 
 void SysTick_Handler(void)
 {
-	systick_count += systick_inc_hz;
+	_systick.timestamp += _systick.hz;
 }
 
 void SysTick_Init(int hz)
 {
-	systick_inc_hz = (uint32_t)hz;
-	systick_ratio_us = SYSTEM_CLOCK / (uint32_t)(hz * hz);
+	uint32_t ticks = SYSTEM_CLOCK / (uint32_t)hz;
+	uint32_t ctrl;
 
-	SysTick_Config(SYSTEM_CLOCK / (uint32_t)hz);
+	if ((ticks - 1UL) > SysTick_LOAD_RELOAD_Msk)
+	    return;
+
+	_systick.ratio = SYSTEM_CLOCK / (uint32_t)(hz * hz);
+	_systick.hz = (uint32_t)hz;
+	ctrl = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
+
+	NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
+	SysTick->LOAD = (uint32_t)(ticks - 1UL);
+	SysTick->VAL = 0UL;
+	SysTick->CTRL = ctrl;
 }
 
 #endif
