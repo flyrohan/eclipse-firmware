@@ -47,10 +47,16 @@ static void HAL_SystemInit(void)
 {
 	System_Remap();
 	PLL_SetFrequency(SYSTEM_CLOCK);
+#ifdef SYSTICK_ENABLED
 	SysTick_Init(SYSTEM_TICK_HZ);
-
+#endif
+#ifdef TIMER_ENABLED
+	TIMER_Init(0, SYSTEM_CLOCK);
+#endif
 	SYS_GpioInit();
+#ifdef CONSOLE_UART_ENABLED
 	UART_ConsoleInit(0, SYSTEM_CLOCK);
+#endif
 }
 SYSTEM_INIT(HAL_SystemInit);
 #endif

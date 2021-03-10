@@ -27,13 +27,13 @@
 
 // ----------------------------------------------------------------------------
 
-#include <cmsis_device.h>
 #include <config.h>
 
 int main (void)
 {
 	Printf("\r\n\r\n***** FIRMWARE *****\r\n\r\n");
+#ifdef CLI_ENABLED
 	CLI_RunLoop();
-
+#endif
 	return 0;
 }
