@@ -1,4 +1,3 @@
-
 #include <string.h>
 #include <cmsis_device.h>
 #include <config.h>

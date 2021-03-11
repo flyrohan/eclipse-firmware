@@ -1,4 +1,3 @@
-
 #include <cmsis_device.h>
 #include <system.h>
 #include <io.h>
