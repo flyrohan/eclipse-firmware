@@ -15,7 +15,9 @@
  ****************************************************************************
  */
 
+#ifndef __FIRMWARE__
 #include "dhry.h"
+#endif
 
 #ifdef DMIPS_ENABLED
 #ifndef REG
@@ -27,7 +29,9 @@
 extern int Int_Glob;
 extern char Ch_1_Glob;
 
+#ifdef __FIRMWARE__
 Enumeration Func_1(Capital_Letter Ch_1_Par_Val, Capital_Letter Ch_2_Par_Val);
+#endif
 
 void Proc_6 (Enum_Val_Par, Enum_Ref_Par)
 /*********************************/

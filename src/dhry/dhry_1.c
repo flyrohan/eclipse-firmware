@@ -37,8 +37,9 @@ int Arr_2_Glob [50] [50];
 
 #ifndef __FIRMWARE__
 extern char *malloc ();
-#endif
 Enumeration Func_1 ();
+#endif
+
  /* forward declaration necessary since Enumeration may not simply be int */
 
 #ifndef REG
@@ -83,6 +84,8 @@ float Microseconds,
 #ifndef __FIRMWARE__
 main ()
 #else
+#include "dhry_2.h"
+
 void DMIPS(int number_of_runs, int cpu_mhz);
 void DMIPS(int number_of_runs, int cpu_mhz)
 #endif

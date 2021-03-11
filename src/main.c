@@ -29,9 +29,11 @@
 
 #include <config.h>
 
+#define _MHZ(_hz)	(_hz/1000000)
+
 int main (void)
 {
-	Printf("\r\n\r\n***** FIRMWARE *****\r\n\r\n");
+	Printf("\r\n\r\n***** FIRMWARE %ld MHZ *****\r\n\r\n", _MHZ(SYSTEM_CLOCK));
 #ifdef CLI_ENABLED
 	CLI_RunLoop();
 #endif
