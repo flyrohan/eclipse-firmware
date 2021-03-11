@@ -32,10 +32,10 @@
 #include <init.h>
 #include <config.h>
 
+#ifdef HAL_INIT
+
 #define GPIO_UART_TX	24
 #define GPIO_UART_RX	25
-
-#ifdef HAL_INIT
 
 static void SYS_GpioInit(void)
 {
@@ -48,15 +48,16 @@ static void HAL_SystemInit(void)
 	System_Remap();
 	PLL_SetFrequency(SYSTEM_CLOCK);
 #ifdef SYSTICK_ENABLED
-	SysTick_Init(SYSTEM_CLOCK);
+	SysTick_TimeInit(SYSTEM_CLOCK, SYSTEM_TICK_HZ);
 #endif
 #ifdef TIMER_ENABLED
-	TIMER_Init(0, SYSTEM_CLOCK);
+	TIMER_TimeInit(0, SYSTEM_CLOCK, SYSTEM_TICK_HZ);
 #endif
 	SYS_GpioInit();
-#ifdef CONSOLE_UART_ENABLED
+#ifdef UART_ENABLED
 	UART_ConsoleInit(0, SYSTEM_CLOCK);
 #endif
 }
+
 SYSTEM_INIT(HAL_SystemInit);
 #endif

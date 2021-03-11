@@ -45,6 +45,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <pll.h>
+#include <time.h>
 #include <systick.h>
 #include <timer.h>
 #include <console.h>

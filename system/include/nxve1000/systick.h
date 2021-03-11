@@ -1,10 +1,9 @@
 #ifndef _SYSTICK_H_
 #define _SYSTICK_H_
 
-#include "cmsis_device.h"
+#include <cmsis_device.h>
 
-void SysTick_Delay(int us);
-uint64_t SysTick_GetTick(void);
-void SysTick_Init(int hz);
+int  SysTick_Init(unsigned int clock, int hz);
+void SysTick_TimeInit(unsigned int clock, int hz);
 
 #endif

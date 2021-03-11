@@ -3,10 +3,6 @@
 #include <io.h>
 #include <config.h>
 
-#ifdef 	CONSOLE_UART_ENABLED
-#define UART_ENABLED
-#endif
-
 #ifdef UART_ENABLED
 
 #ifndef UART_BAUDRATE
@@ -151,9 +147,7 @@ void UART_Init(int ch, unsigned int clock)
 
 	UART_SetBaudRate(clock, UART_BAUDRATE);
 }
-#endif
 
-#ifdef CONSOLE_UART_ENABLED
 static CLI_Console UART_Console = {
 	.Getc = UART_ReadByte,
 	.Putc = UART_WriteByte,

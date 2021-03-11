@@ -365,13 +365,13 @@
 
 #ifdef TIME
 static long time(int n) {
-	return TIMER_GetTick();
+	return SysTime_GetTick();
 }
 #endif
 
 #ifdef MSC_CLOCK
 #define HZ				1000000	/* default 1000, GetTick return US unit */
-#define clock()			((long int)TIMER_GetTick())
+#define clock()			((long int)SysTime_GetTick())
 #endif
 
 #define printf(msg...)	Printf(msg)

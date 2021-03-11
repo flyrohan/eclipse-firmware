@@ -3,14 +3,6 @@
 
 #ifdef LOOP_ENABLED
 
-#ifdef SYSTICK_ENABLED
-#define Delay(_d)	SysTick_Delay(_d * 1000)
-#define GetTick()	(SysTick_GetTick() / 1000)
-#else
-#define Delay(_d)	TIMER_Delay(_d * 1000)
-#define GetTick()	(TIMER_GetTick() / 1000)
-#endif
-
 #define CRTLC_EXIT() do { \
 	int c = Getc();	\
 	if (isCtrlc(c))	\
@@ -34,13 +26,13 @@ static int do_loop(int argc, char * const argv[])
 		count = (int)strtoul(argv[2], NULL, 10);
 
 	for (int i = 0; i < count; i++)	{
-		uint32_t tick = (uint32_t)GetTick();
+		uint32_t tick = (uint32_t)SysTime_GetTick();
 
 		if (Tstc())
 			CRTLC_EXIT();	
 		Printf("[%03d] %d : %d\r\n", i, tick, ms);
 		if (ms)
-			Delay(ms);
+			SysTime_Delay(ms);
 	};
 
 	return 0;

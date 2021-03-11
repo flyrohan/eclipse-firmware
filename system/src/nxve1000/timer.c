@@ -27,12 +27,13 @@
 
 #include <cmsis_device.h>
 #include <timer.h>
+#include <time.h>
 #include <io.h>
 #include <config.h>
 
 #ifdef TIMER_ENABLED
 
-#define TIMER_CLOCK_HZ			1000000
+#define TIMER_CLOCK_HZ			1000000			/* 1Mhz */
 #define	TIMER_MAX_COUNT			-(1UL)
 #define TIMER_MUX_SEL			0 				/* bypass */
 
@@ -70,19 +71,7 @@ static struct __attribute__((__packed__)) _TIMER_ {
 	.lastdec = 0,
 };
 
-void TIMER_Delay(int us)
-{
-#if TIMER_IRQ_MODE
-#else
-	uint64_t end = TIMER_GetTick() + (uint64_t)us;
-
-	while (TIMER_GetTick() < end) {
-			;
-	};
-#endif
-}
-
-uint64_t TIMER_GetTick(void)
+static uint64_t TIMER_GetTick(void)
 {
 	uint64_t time = _timer.timestamp;
 	uint32_t lastdec = _timer.lastdec;
@@ -97,6 +86,18 @@ uint64_t TIMER_GetTick(void)
 	_timer.timestamp = time;
 
 	return _timer.timestamp;
+}
+
+static void TIMER_Delay(int ms)
+{
+#if TIMER_IRQ_MODE
+#else
+	uint64_t end = TIMER_GetTick() + (uint64_t)ms * 1000;
+
+	while (TIMER_GetTick() < end) {
+			;
+	};
+#endif
 }
 
 static void TIMER_Config(int mux, int scale, unsigned int count)
@@ -121,7 +122,7 @@ static void TIMER_Stop(void)
 	writel(_mask(_timer.base->TCON, TCON_START), &_timer.base->TCON);
 }
 
-int TIMER_Init(int ch, unsigned int clock)
+int TIMER_Init(int ch, unsigned int clock, int hz)
 {
 	unsigned int count = TIMER_MAX_COUNT;
 	int scale;
@@ -141,5 +142,16 @@ int TIMER_Init(int ch, unsigned int clock)
 	TIMER_Start();
 
 	return 0;
+}
+
+static SysTime_Op Timer_Op = {
+	.Delay = TIMER_Delay,
+	.GetTick = TIMER_GetTick,
+};
+
+void TIMER_TimeInit(int ch, unsigned int clock, int hz)
+{
+	TIMER_Init(ch, clock, hz);
+	SysTime_Init(&Timer_Op);
 }
 #endif
