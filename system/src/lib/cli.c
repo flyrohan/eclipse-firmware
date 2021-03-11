@@ -95,12 +95,12 @@ static int CLI_ReadLine(const char *const prompt, char *buffer)
 
 void CLI_RunLoop(void)
 {
-	static char buffer[CLI_BUFFER_SIZE + 1] = { 0, };
+	static char cli_buffer[CLI_BUFFER_SIZE + 1] = { 0, };
 
 	for (;;) {
-		int len = CLI_ReadLine(CLI_PROMPT, buffer);
+		int len = CLI_ReadLine(CLI_PROMPT, cli_buffer);
 		if (len != -1)
-			CMD_Run(buffer);
+			CMD_Run(cli_buffer);
 	}
 }
 #endif

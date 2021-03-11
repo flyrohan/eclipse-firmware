@@ -10,6 +10,6 @@ typedef struct {
 
 void SysTime_Delay(int ms);
 uint64_t SysTime_GetTick(void);
-void SysTime_Init(SysTime_Op *op);
+void SysTime_Register(SysTime_Op *op);
 
 #endif

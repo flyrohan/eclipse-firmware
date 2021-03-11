@@ -147,15 +147,15 @@ void UART_Init(int ch, unsigned int clock)
 	UART_SetBaudRate(clock, UART_BAUDRATE);
 }
 
-static CLI_Console UART_Console = {
+static Console_Op UART_Op = {
 	.Getc = UART_ReadByte,
 	.Putc = UART_WriteByte,
 	.Tstc = UART_Tstc,
 };
 
-void UART_ConsoleInit(int ch, unsigned int clock)
+void UART_ConsoleRegister(int ch, unsigned int clock)
 {
 	UART_Init(ch, clock);
-	Console_Init(&UART_Console);
+	Console_Register(&UART_Op);
 }
 #endif

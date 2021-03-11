@@ -5,9 +5,9 @@ typedef struct {
 	void	(*Putc)(const char c);
 	int 	(*Getc)(void);
 	int 	(*Tstc)(void);
-} CLI_Console;
+} Console_Op;
 
-void Console_Init(CLI_Console *console);
+void Console_Register(Console_Op *console);
 void Putc(const char c);
 void Puts(const char *s);
 int Getc(void);

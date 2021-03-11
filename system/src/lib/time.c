@@ -20,7 +20,7 @@ uint64_t SysTime_GetTick(void)
 	return 0;
 }
 
-void SysTime_Init(SysTime_Op *op)
+void SysTime_Register(SysTime_Op *op)
 {
 	time_op = op;
 }

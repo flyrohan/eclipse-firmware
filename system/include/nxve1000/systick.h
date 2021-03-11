@@ -4,6 +4,6 @@
 #include <cmsis_device.h>
 
 int  SysTick_Init(unsigned int clock, int hz);
-void SysTick_TimeInit(unsigned int clock, int hz);
+void SysTick_Register(unsigned int clock, int hz);
 
 #endif

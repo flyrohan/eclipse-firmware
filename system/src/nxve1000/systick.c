@@ -103,9 +103,9 @@ static SysTime_Op SysTick_Op = {
 	.GetTick = SysTick_GetTick,
 };
 
-void SysTick_TimeInit(unsigned int clock, int hz)
+void SysTick_Register(unsigned int clock, int hz)
 {
 	SysTick_Init(clock, hz);
-	SysTime_Init(&SysTick_Op);
+	SysTime_Register(&SysTick_Op);
 }
 #endif

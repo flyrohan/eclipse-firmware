@@ -245,12 +245,12 @@ int Printf(const char *fmt, ...)
     return result;
 }
 
-static CLI_Console *cli_console;
+static Console_Op *console_op;
 
 void Putc(const char c)
 {
-	if (cli_console->Putc)
-		cli_console->Putc(c);
+	if (console_op->Putc)
+		console_op->Putc(c);
 }
 
 void Puts(const char *s)
@@ -264,8 +264,8 @@ int Getc(void)
 {
 	int c = -1;
 
-	if (cli_console->Getc)
-		c = cli_console->Getc();
+	if (console_op->Getc)
+		c = console_op->Getc();
 
 	return c;
 }
@@ -274,8 +274,8 @@ int Tstc(void)
 {
 	int ret = 0;
 
-	if (cli_console->Tstc)
-		ret = cli_console->Tstc();
+	if (console_op->Tstc)
+		ret = console_op->Tstc();
 
 	return ret;
 }
@@ -285,9 +285,9 @@ int isCtrlc(int c)
 	return (c == 0x03) ? 1 : 0;
 }
 
-void Console_Init(CLI_Console *console)
+void Console_Register(Console_Op *console)
 {
-	cli_console = console;
+	console_op = console;
 }
 
 #endif

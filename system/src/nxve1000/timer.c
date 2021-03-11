@@ -122,9 +122,9 @@ static SysTime_Op Timer_Op = {
 	.GetTick = TIMER_GetTick,
 };
 
-void TIMER_TimeInit(int ch, unsigned int clock, int hz)
+void TIMER_Register(int ch, unsigned int clock, int hz)
 {
 	TIMER_Init(ch, clock, hz);
-	SysTime_Init(&Timer_Op);
+	SysTime_Register(&Timer_Op);
 }
 #endif
