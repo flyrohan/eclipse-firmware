@@ -36,6 +36,19 @@ int main (void)
 	Printf("\r\n\r\n***** FIRMWARE %ld MHZ *****\r\n\r\n", _MHZ(SYSTEM_CLOCK));
 #ifdef CLI_ENABLED
 	CLI_RunLoop();
+#else
+	#ifdef DMIPS_ENABLED
+	extern void DMIPS(int number_of_runs, int cpu_mhz);
+	do {
+		DMIPS(400000, _MHZ(SYSTEM_CLOCK));
+	} while (1);
+	#endif
 #endif
+
+	while (1) {
+		Printf("\r\n\r\n!!!!! EXIT FIRMWARE !!!!!\r\n\r\n")
+		;
+	}
+
 	return 0;
 }
