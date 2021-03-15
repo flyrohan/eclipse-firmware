@@ -468,14 +468,16 @@ typedef struct record
  } Rec_Type, *Rec_Pointer;
 
 #ifdef __FIRMWARE__
-void Proc_1 (REG Rec_Pointer Ptr_Val_Par);
-void Proc_2 (One_Fifty   *Int_Par_Ref);
-void Proc_3 (Rec_Pointer *Ptr_Ref_Par);
-void Proc_4 (void);
-void Proc_5 (void);
-void Proc_6(Enumeration, Enumeration *);
-void Proc_7(One_Fifty, One_Fifty, One_Fifty *);
-void Proc_8(Arr_1_Dim, Arr_2_Dim, int, int);
+#define INLINE	inline __attribute__((always_inline))
+
+INLINE void Proc_1 (REG Rec_Pointer Ptr_Val_Par);
+INLINE void Proc_2 (One_Fifty   *Int_Par_Ref);
+INLINE void Proc_3 (Rec_Pointer *Ptr_Ref_Par);
+INLINE void Proc_4 (void);
+INLINE void Proc_5 (void);
+INLINE void Proc_6(Enumeration, Enumeration *);
+INLINE void Proc_7(One_Fifty, One_Fifty, One_Fifty *);
+INLINE void Proc_8(Arr_1_Dim, Arr_2_Dim, int, int);
 
 Boolean Func_2(Str_30, Str_30);
 Boolean Func_3(Enumeration);

@@ -322,7 +322,7 @@ long DMIPS = (long)((Dhrystones_Per_Second/1757) * 1000);
 }
 
 
-void Proc_1 (Ptr_Val_Par)
+INLINE void Proc_1 (Ptr_Val_Par)
 
 /******************/
 
@@ -357,7 +357,7 @@ REG Rec_Pointer Ptr_Val_Par;
 } /* Proc_1 */
 
 
-void Proc_2 (Int_Par_Ref)
+INLINE void Proc_2 (Int_Par_Ref)
 /******************/
  /* executed once */
  /* *Int_Par_Ref == 1, becomes 4 */
@@ -380,7 +380,7 @@ One_Fifty *Int_Par_Ref;
 } /* Proc_2 */
 
 
-void Proc_3 (Ptr_Ref_Par)
+INLINE void Proc_3 (Ptr_Ref_Par)
 /******************/
  /* executed once */
  /* Ptr_Ref_Par becomes Ptr_Glob */
@@ -395,7 +395,7 @@ Rec_Pointer *Ptr_Ref_Par;
 } /* Proc_3 */
 
 
-void Proc_4 (void) /* without parameters */
+INLINE void Proc_4 (void) /* without parameters */
 /*******/
  /* executed once */
 {
@@ -407,7 +407,7 @@ void Proc_4 (void) /* without parameters */
 } /* Proc_4 */
 
 
-void Proc_5 (void) /* without parameters */
+INLINE void Proc_5 (void) /* without parameters */
 /*******/
  /* executed once */
 {

@@ -9,7 +9,7 @@ extern void DMIPS(int number_of_runs, int cpu_mhz);
 
 static int do_dmips(int argc, char * const argv[])
 {
-	int number_of_runs = 20000;
+	int number_of_runs = 400000;
 
 	if (argc > 1 && argv[1])
 		number_of_runs = strtol(argv[1], NULL, 10);
