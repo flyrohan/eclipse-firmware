@@ -168,8 +168,6 @@ _start (void)
   // Call the main entry point, and save the exit code.
   int code = main ();
 
-  _exit (code);
-
   // Should never reach this, _exit() should have already
   // performed a reset.
   for (;;)
