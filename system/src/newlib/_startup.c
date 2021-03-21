@@ -77,12 +77,6 @@ extern unsigned int __bss_end__;
 extern int
 main (void);
 
-// The implementation for the exit routine; for embedded
-// applications, a system reset will be performed.
-extern void
-__attribute__((noreturn))
-_exit (int);
-
 // ----------------------------------------------------------------------------
 
 // Forward declarations

@@ -13,13 +13,13 @@
 
 #define CMD_ENTRY_START \
 ({ \
-        static char _cmd_start[0] __aligned(4) __attribute__((unused, section(".cmd_entry_1"))); \
+        static char _cmd_start[0] __attribute__((unused, section(".cmd_entry_1"))); \
         (CMD_Entry *)&_cmd_start; \
 })
 
 #define CMD_ENTRY_END \
 ({ \
-        static char _cmd_end[0] __aligned(4) __attribute__((unused, section(".cmd_entry_3"))); \
+        static char _cmd_end[0] __attribute__((unused, section(".cmd_entry_3"))); \
         (CMD_Entry *)&_cmd_end; \
 })
 
