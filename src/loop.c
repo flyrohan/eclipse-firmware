@@ -12,7 +12,7 @@
 /*
  * $> loop <sleep:ms> <count>
  */
-static int do_loop(int argc, char * const argv[])
+int do_loop(int argc, char * const argv[])
 {
     int count = 10;
 	int ms = 0;

@@ -54,8 +54,11 @@
 // ----------------------------------------------------------------------------
 
 #include <stdint.h>
+#if !defined(__ARMCC_VERSION)
 #include <sys/types.h>
+#endif
 
+#if !defined(__ARMCC_VERSION)
 // ----------------------------------------------------------------------------
 // Begin address for the initialisation values of the .data section.
 // defined in linker script
@@ -167,5 +170,5 @@ _start (void)
   for (;;)
     ;
 }
-
+#endif
 // ----------------------------------------------------------------------------

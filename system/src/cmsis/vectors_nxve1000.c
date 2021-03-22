@@ -45,23 +45,36 @@ void __attribute__ ((weak, alias ("Default_Handler")))
 DeviceInterrupt_Handler(void);
 
 // ----------------------------------------------------------------------------
-
+#if !defined(__ARMCC_VERSION)
 extern unsigned int _estack;
+#endif
 
 typedef void
 (* const pHandler)(void);
+
+#if defined(__ARMCC_VERSION)
+extern int __main(void);									/* Entry point for C run-time initialization */
+extern unsigned int Image$$ARM_LIB_STACKHEAP$$ZI$$Limit; 	/* for (default) One Region model */
+#endif
 
 // ----------------------------------------------------------------------------
 
 // The vector table.
 // This relies on the linker script to place at correct location in memory.
-
+#if !defined(__ARMCC_VERSION)
 __attribute__ ((section(".isr_vector"),used))
+#else
+__attribute__ ((section("isr_vector"),used))
+#endif
 pHandler __isr_vectors[] =
   { //
-    (pHandler) &_estack,                          // The initial stack pointer
+#if !defined(__ARMCC_VERSION)
+		(pHandler) &_estack,                      // The initial stack pointer
         Reset_Handler,                            // The reset handler
-
+#else
+	    (pHandler)&Image$$ARM_LIB_STACKHEAP$$ZI$$Limit,
+	    (pHandler)__main, /* Initial PC, set to entry point  */
+#endif
         NMI_Handler,                              // The NMI handler
         HardFault_Handler,                        // The hard fault handler
 
@@ -94,5 +107,4 @@ Default_Handler(void)
     {
     }
 }
-
 // ----------------------------------------------------------------------------

@@ -11,6 +11,14 @@
 #define CMD_MAXARGS		16
 #endif
 
+#ifdef __DEBUG__
+#include <console.h>
+#define dbg(m...)		Printf(m)
+#else
+#define dbg(m...)		do {} while(0)
+#endif
+
+#if !defined(__ARMCC_VERSION)
 #define CMD_ENTRY_START \
 ({ \
         static char _cmd_start[0] __attribute__((unused, section(".cmd_entry_1"))); \
@@ -23,14 +31,57 @@
         (CMD_Entry *)&_cmd_end; \
 })
 
-#define isblank(c)      (c == ' ' || c == '\t')
+static CMD_Entry *CMD_FindEntry(const char *cmd)
+{
+	CMD_Entry *start = CMD_ENTRY_START;
+	CMD_Entry *end = CMD_ENTRY_END;
 
-#ifdef __DEBUG__
-#include <console.h>
-#define dbg(m...)		Printf(m)
+	dbg("Entry: cmd:%s, 0x%x-0x%x, %dEa\n", cmd, start, end, (end - start));
+	if (!cmd || (unsigned int)(end - start) == 0)
+		return NULL;
+
+	for (CMD_Entry *p = start; p < end; p++) {
+		if (strcmp(cmd, p->name) == 0) {
+			if (strlen(cmd) == strlen(p->name)) {
+				dbg("Found [%s:%s]\n", cmd, p->name);
+				return p;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 #else
-#define dbg(m...)		do {} while(0)
+static LIST_HEAD(cmd_entry_list);
+
+void CMD_Register(CMD_Entry *entry)
+{
+	list_add(&entry->list, &cmd_entry_list);
+}
+
+CMD_Entry *CMD_FindEntry(const char *cmd)
+{
+	struct list_head *pos;
+
+	if (!cmd || list_empty(&cmd_entry_list))
+		return NULL;
+
+	list_for_each(pos, &cmd_entry_list) {
+		CMD_Entry *p = list_entry(pos, CMD_Entry, list);
+		if (strcmp(cmd, p->name) == 0) {
+			if (strlen(cmd) == strlen(p->name)) {
+				dbg("Found [%s:%s]\n", cmd, p->name);
+				return p;
+			}
+		}
+	}
+
+	return NULL;
+}
 #endif
+
+#define isblank(c)      (c == ' ' || c == '\t')
 
 static int LineToArgs(char *line, char *argv[])
 {
@@ -61,27 +112,6 @@ static int LineToArgs(char *line, char *argv[])
 	}
 
 	return nargs;
-}
-
-static CMD_Entry *CMD_FindEntry(const char *cmd)
-{
-	CMD_Entry *start = CMD_ENTRY_START;
-	CMD_Entry *end = CMD_ENTRY_END;
-
-	dbg("Entry: cmd:%s, 0x%x-0x%x, %dEa\n", cmd, start, end, (end - start));
-	if (!cmd || (unsigned int)(end - start) == 0)
-		return NULL;
-
-	for (CMD_Entry *p = start; p < end; p++) {
-		if (strcmp(cmd, p->name) == 0) {
-			if (strlen(cmd) == strlen(p->name)) {
-				dbg("Found [%s:%s]\n", cmd, p->name);
-				return p;
-			}
-		}
-	}
-
-	return NULL;
 }
 
 static int CMD_RunEntry(int argc, char * const argv[])

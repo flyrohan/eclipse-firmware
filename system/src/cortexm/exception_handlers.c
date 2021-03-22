@@ -41,7 +41,7 @@ _start (void);
 // Default exception handlers. Override the ones here by defining your own
 // handler routines in your application code.
 // ----------------------------------------------------------------------------
-
+#if !defined(__ARMCC_VERSION)
 // The Release version is optimised to a quick branch to _start.
 void __attribute__ ((section(".after_vectors"),naked))
 Reset_Handler(void)
@@ -55,6 +55,7 @@ Reset_Handler(void)
         :
     );
   }
+#endif
 
 void __attribute__ ((section(".after_vectors"),weak))
 NMI_Handler (void)

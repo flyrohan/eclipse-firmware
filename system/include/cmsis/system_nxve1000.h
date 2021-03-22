@@ -44,13 +44,14 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <list.h>
 #include <pll.h>
 #include <time.h>
 #include <systick.h>
 #include <timer.h>
 #include <console.h>
 #include <cli.h>
-#include <cmd.h>
+#include <cmd_e.h>
 #include <uart.h>
 #include <gpio.h>
 

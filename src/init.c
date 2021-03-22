@@ -43,7 +43,8 @@ static void SYS_GpioInit(void)
 	GPIO_SetAlt(GPIO_UART_RX, GPIO_ALTFUNC_1);
 }
 
-static void HAL_SystemInit(void)
+SYSTEM_INIT(HAL_SystemInit);
+void HAL_SystemInit(void)
 {
 	System_Remap();
 	PLL_SetFrequency(SYSTEM_CLOCK);
@@ -59,5 +60,4 @@ static void HAL_SystemInit(void)
 #endif
 }
 
-SYSTEM_INIT(HAL_SystemInit);
 #endif
