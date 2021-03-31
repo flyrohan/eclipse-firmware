@@ -64,14 +64,16 @@ void __attribute__((weak)) HAL_SystemInit(void)
 	SYS_eFlashInit();
 	SYS_GpioInit();
 
-#ifdef UART_ENABLED
+#if defined(CONSOLE_ENABLED) && defined(UART_ENABLED)
 	UART_ConsoleRegister(UART_CHANNEL, SYSTEM_CLOCK);
 #endif
 
-#if defined(SYSTICK_ENABLED)
+#ifdef SYSTEM_TIME_ENABLED
+	#if defined(SYSTICK_ENABLED)
 	SysTick_Register(SYSTEM_CLOCK, SYSTEM_TICK_HZ);
-#elif defined(TIMER_ENABLED)
+	#elif defined(TIMER_ENABLED)
 	TIMER_Register(0, SYSTEM_CLOCK, SYSTEM_TICK_HZ);
+	#endif
 #endif
 }
 
