@@ -9,10 +9,7 @@
 		return 0;	\
 	} while (0)
 
-/*
- * $> loop <sleep:ms> <count>
- */
-int do_loop(int argc, char * const argv[])
+CMD_TYPE int do_loop(int argc, char * const argv[])
 {
     int count = 10;
 	int ms = 0;
@@ -38,5 +35,8 @@ int do_loop(int argc, char * const argv[])
 	return 0;
 }
 
+/*
+ * $> loop <sleep:ms> <count>
+ */
 CMD_DEFINE(loop, do_loop);
 #endif
