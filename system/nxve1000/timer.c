@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <cmsis_device.h>
 #include <timer.h>
 #include <time.h>
@@ -44,7 +45,7 @@ static struct __attribute__((__packed__)) _TIMER_ {
 	.lastdec = 0,
 };
 
-static uint64_t TIMER_GetTick(void)
+static uint64_t TIMER_GetTickUS(void)
 {
 	uint64_t time = _timer.timestamp;
 	uint32_t lastdec = _timer.lastdec;
@@ -63,15 +64,16 @@ static uint64_t TIMER_GetTick(void)
 
 static void TIMER_Delay(int ms)
 {
-#if TIMER_IRQ_MODE
-#else
-	uint64_t end = TIMER_GetTick() + (uint64_t)ms * 1000;
+	uint64_t end = TIMER_GetTickUS() + (uint64_t)ms * 1000;
 
-	while (TIMER_GetTick() < end) {
+	while (TIMER_GetTickUS() < end) {
 			;
 	};
-#endif
 }
+static SysTime_Op SysTick_Op = {
+	.Delay = TIMER_Delay,
+	.GetTickUS = TIMER_GetTickUS,
+};
 
 static void TIMER_Config(int mux, int scale, unsigned int count)
 {
@@ -81,50 +83,42 @@ static void TIMER_Config(int mux, int scale, unsigned int count)
 	writel(count, &_timer.base->TCMPB);
 }
 
-static void TIMER_Start(void)
+static void TIMER_Start(bool irqenb)
 {
-#if TIMER_IRQ_MODE
-	writel(readl(&_timer.base->TINT_CSTAT) | TINT_ENABLE, &_timer.base->TINT_CSTAT);
-#endif
+	if (irqenb)
+    	writel(TINT_STATUS | TINT_ENABLE, &_timer.base->TINT_CSTAT);
+
 	writel((readl(&_timer.base->TCON) | TCON_MANUALUPDATE), &_timer.base->TCON);
 	writel(TCON_AUTORELOAD | TCON_START, &_timer.base->TCON);
 }
 
 static void TIMER_Stop(void)
 {
+	writel(0x0, &_timer.base->TINT_CSTAT);
 	writel(_mask(_timer.base->TCON, TCON_START), &_timer.base->TCON);
 }
 
-int TIMER_Init(int ch, unsigned int clock, int hz)
+int TIMER_Init(int ch, unsigned int clock, int hz  __attribute__((unused)))
 {
 	unsigned int count = TIMER_MAX_COUNT;
-	int scale;
+	bool irqenb = false;
+	int scale = (int)clock / TIMER_CLOCK_HZ;
 	
 	if (ch > 7)
 		return -1;
 
 	_timer.base = (void *)(TIMER_PHY_BASE + (TIMER_CH_OFFSET * ch));
 
-#if TIMER_IRQ_MODE
-	count = TIMER_CLOCK_HZ;
-#endif
-	scale = (int)clock / TIMER_CLOCK_HZ;
-
 	TIMER_Stop();
 	TIMER_Config(TIMER_MUX_SEL, scale, count);
-	TIMER_Start();
+	TIMER_Start(irqenb);
 
 	return 0;
 }
 
-static SysTime_Op Timer_Op = {
-	.Delay = TIMER_Delay,
-	.GetTick = TIMER_GetTick,
-};
-
 void TIMER_Register(int ch, unsigned int clock, int hz)
 {
 	TIMER_Init(ch, clock, hz);
-	SysTime_Register(&Timer_Op);
+	SysTime_Register(&SysTick_Op);
 }
 #endif
