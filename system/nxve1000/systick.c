@@ -63,15 +63,16 @@ int SysTick_Init(unsigned int clock, int hz)
 	return 0;
 }
 
-static SysTime_Op SysTick_Op = {
+static SysTime_Op SysTick_Op __attribute__((unused)) = {
 	.Delay = SysTick_Delay,
 	.GetTickUS = SysTick_GetTickUS,
 };
 
+#ifdef SYSTEM_TIME_ENABLED
 void SysTick_Register(unsigned int clock, int hz)
 {
 	SysTick_Init(clock, hz);
 	SysTime_Register(&SysTick_Op);
 }
-
+#endif
 #endif /* SYSTICK_ENABLED */
