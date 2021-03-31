@@ -4,16 +4,15 @@
 #include <cmsis_device.h>
 
 //////////////////////////////////////////////////////////////////////////////////////
-// App Enable
+// Apps Enable
 //////////////////////////////////////////////////////////////////////////////////////
-#define HAL_INIT
 #define LOOP_ENABLED
 #define DMIPS_ENABLED
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Library and System Interface Enable
 //////////////////////////////////////////////////////////////////////////////////////
-#define SYSTIME_ENABLED
+#define SYSTEM_TIME_ENABLED
 #define CLI_ENABLED
 #define CMD_ENABLED
 #define CONSOLE_ENABLED
@@ -33,7 +32,6 @@
 #define SYSTEM_CLOCK		48000000
 #define SYSTEM_TICK_HZ		1000
 #define TIMER_CH			(0)
-#define UART_CHANNEL
-#define SYSTICK_IRQ_MODE	(0)
-#define TIMER_IRQ_MODE		(0)
+#define UART_CHANNEL		0
+
 #endif
