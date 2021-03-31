@@ -65,7 +65,7 @@ void __attribute__((weak)) HAL_SystemInit(void)
 	SYS_GpioInit();
 
 #ifdef UART_ENABLED
-	UART_ConsoleRegister(0, SYSTEM_CLOCK);
+	UART_ConsoleRegister(UART_CHANNEL, SYSTEM_CLOCK);
 #endif
 
 #if defined(SYSTICK_ENABLED)
