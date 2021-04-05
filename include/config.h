@@ -12,7 +12,9 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // Library and System Interface Enable
 //////////////////////////////////////////////////////////////////////////////////////
-#define SYSTEM_TIME_ENABLED
+#define SYSTEM_TIME_SYSTICK 	0
+#define SYSTEM_TIME_TIMER 		1
+#define SYSTEM_TIME_MODULE		SYSTEM_TIME_TIMER
 #define CLI_ENABLED
 #define CMD_ENABLED
 #define CONSOLE_ENABLED
@@ -21,6 +23,7 @@
 // Module Enable
 //////////////////////////////////////////////////////////////////////////////////////
 #define TIMER_ENABLED	/* timer: TIMER_ENABLED or SYSTICK_ENABLED */
+#define SYSTICK_ENABLED
 #define REMAP_ENABLED
 #define PLL_ENABLED
 #define UART_ENABLED
