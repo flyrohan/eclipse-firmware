@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <cmsis_device.h>
 #include <timer.h>
-#include <time.h>
+#include <systime.h>
 #include <io.h>
 #include <config.h>
 
@@ -117,11 +117,9 @@ int TIMER_Init(int ch, unsigned int clock, int hz __attribute__((unused)))
 	return 0;
 }
 
-#ifdef SYSTEM_TIME_ENABLED
 void TIMER_Register(int ch, unsigned int clock, int hz)
 {
 	TIMER_Init(ch, clock, hz);
 	SysTime_Register(&SysTick_Op);
 }
-#endif
 #endif  /* TIMER_ENABLED */

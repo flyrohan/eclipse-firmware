@@ -68,11 +68,9 @@ static SysTime_Op SysTick_Op __attribute__((unused)) = {
 	.GetTickUS = SysTick_GetTickUS,
 };
 
-#ifdef SYSTEM_TIME_ENABLED
 void SysTick_Register(unsigned int clock, int hz)
 {
 	SysTick_Init(clock, hz);
 	SysTime_Register(&SysTick_Op);
 }
-#endif
 #endif /* SYSTICK_ENABLED */
