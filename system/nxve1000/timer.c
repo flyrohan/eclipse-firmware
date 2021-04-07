@@ -93,7 +93,7 @@ static void TIMER_Start(int ch, bool irqenb)
 	struct TIMER_t *timer = &timer_t[ch];
 
 	if (irqenb)
-		writel(TINT_STATUS | TINT_ENABLE, timer->base->TINT_CSTAT);
+		writel(TINT_STATUS | TINT_ENABLE, &timer->base->TINT_CSTAT);
 
 	writel((readl(&timer->base->TCON) | TCON_MANUALUPDATE), &timer->base->TCON);
 	writel(TCON_AUTORELOAD | TCON_START, &timer->base->TCON);
