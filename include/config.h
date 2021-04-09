@@ -35,6 +35,7 @@
 #define SYSTEM_CLOCK		48000000
 #define SYSTEM_TICK_HZ		1000
 #define TIMER_CH			(0)
+#define TIMER_CLOCK_HZ		1000000			/* 1Mhz */
 #define UART_CHANNEL		0
 
 #endif
