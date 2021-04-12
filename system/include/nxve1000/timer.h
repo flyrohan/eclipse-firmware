@@ -2,6 +2,7 @@
 #define _TIMER_H_
 
 int  TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz);
+void TIMER_Frequency(int ch, int mux, int scale, unsigned int count, unsigned int cmp);
 void TIMER_Start(int ch);
 void TIMER_Stop(int ch);
 

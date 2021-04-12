@@ -8,10 +8,7 @@
 
 #ifdef TIMER_ENABLED
 
-#define TIMER_CHS				8
-#ifndef TIMER_CLOCK_HZ
-#define TIMER_CLOCK_HZ			1000000			/* 1Mhz */
-#endif
+#define TIMER_CHS				2
 #define	TIMER_MAX_COUNT			-(1UL)
 #define TIMER_MUX_SEL			0 				/* bypass */
 
@@ -40,19 +37,18 @@ typedef struct {
 /*
  * Timer HW
  */
-struct TIMER_t {
+static struct TIMER_t {
 	Timer_Reg *base;
 	uint64_t timestamp;
 	uint32_t lastdec;
-};
-
-static struct TIMER_t _timer[TIMER_CHS];
+	uint32_t ratio;
+} _timer[TIMER_CHS] = { };
 
 uint64_t TIMER_GetTickUS(int ch)
 {
 	uint64_t time = _timer[ch].timestamp;
 	uint32_t lastdec = _timer[ch].lastdec;
-	uint32_t now = TIMER_MAX_COUNT - readl(&_timer[ch].base->TCNTO);
+	uint32_t now = (TIMER_MAX_COUNT - readl(&_timer[ch].base->TCNTO)) / _timer[ch].ratio;
 
 	if (now >= lastdec)
 		time += now - lastdec;
@@ -74,7 +70,8 @@ void TIMER_Delay(int ch, int ms)
 	};
 }
 
-static void TIMER_Frequency(int ch, int mux, int scale, unsigned int count)
+void TIMER_Frequency(int ch, int mux, int scale,
+							unsigned int count, unsigned int cmp)
 {
 	struct TIMER_t *timer = &_timer[ch];
 
@@ -83,7 +80,7 @@ static void TIMER_Frequency(int ch, int mux, int scale, unsigned int count)
 	writel(_mask(timer->base->TCFG0, TCFG0_PRESCALER_MASK) |
 			(uint32_t)(scale - 1), &timer->base->TCFG0);
 	writel(count, &timer->base->TCNTB);
-	writel(count, &timer->base->TCMPB);
+	writel(cmp, &timer->base->TCMPB);
 }
 
 void TIMER_Start(int ch)
@@ -106,21 +103,13 @@ int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz)
 {
 	struct TIMER_t *timer = &_timer[ch];
 	unsigned int count = TIMER_MAX_COUNT;
-	int scale = (int)infreq / TIMER_CLOCK_HZ;
-	
-	if (ch > 7)
-		return -1;
-
-	if (hz)
-		count = tfreq / (unsigned  int)hz;
-
-	if (!tfreq)
-		scale = (int)(infreq / tfreq);
+	int scale = (int)(infreq / tfreq);
 
 	timer->base = (void *)(TIMER_PHY_BASE + (TIMER_CH_OFFSET * ch));
+	timer->ratio = tfreq / ((unsigned int)hz * 1000);
 
 	TIMER_Stop(ch);
-	TIMER_Frequency(ch, TIMER_MUX_SEL, scale, count);
+	TIMER_Frequency(ch, TIMER_MUX_SEL, scale, count, count);
 
 	return 0;
 }
@@ -139,7 +128,7 @@ static void __SysTime_Delay(int ms)
 	TIMER_Delay(SysTime_GetChannel(), ms);
 }
 
-static SysTime_Op Timer_Op __attribute__((unused)) = {
+static SysTime_Op Timer_Op = {
 	.GetTickUS = __SysTime_GetTickUS,
 	.Delay = __SysTime_Delay,
 };
