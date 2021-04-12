@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // Module Enable
 //////////////////////////////////////////////////////////////////////////////////////
-#define TIMER_ENABLED	/* timer: TIMER_ENABLED or SYSTICK_ENABLED */
-#define SYSTICK_ENABLED
+#define TIMER_ENABLED
+//#define SYSTICK_ENABLED
 #define REMAP_ENABLED
 #define PLL_ENABLED
 #define UART_ENABLED
@@ -38,5 +38,6 @@
 #define TIMER_CH			(0)
 #define TIMER_CLOCK_HZ		1000000			/* 1Mhz */
 #define UART_CHANNEL		0
-
+#define CLI_BUFFER_SIZE 	32
+#define CMD_BUFFER_SIZE		32
 #endif
