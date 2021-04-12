@@ -8,7 +8,7 @@
 
 #ifdef TIMER_ENABLED
 
-#define TIMER_CHS				2
+#define TIMER_CHS				8
 #define	TIMER_MAX_COUNT			-(1UL)
 #define TIMER_MUX_SEL			0 				/* bypass */
 
