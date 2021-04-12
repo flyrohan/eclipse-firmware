@@ -102,7 +102,7 @@ void TIMER_Stop(int ch)
 	writel(_mask(timer->base->TCON, TCON_START), &timer->base->TCON);
 }
 
-int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz __attribute__((unused)))
+int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz)
 {
 	struct TIMER_t *timer = &_timer[ch];
 	unsigned int count = TIMER_MAX_COUNT;
@@ -111,9 +111,13 @@ int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz __attribu
 	if (ch > 7)
 		return -1;
 
-	timer->base = (void *)(TIMER_PHY_BASE + (TIMER_CH_OFFSET * ch));
+	if (hz)
+		count = tfreq / (unsigned  int)hz;
+
 	if (!tfreq)
 		scale = (int)(infreq / tfreq);
+
+	timer->base = (void *)(TIMER_PHY_BASE + (TIMER_CH_OFFSET * ch));
 
 	TIMER_Stop(ch);
 	TIMER_Frequency(ch, TIMER_MUX_SEL, scale, count);
@@ -125,8 +129,15 @@ static int systime_ch;
 #define SysTime_Channel(_ch)		(systime_ch = _ch)
 #define SysTime_GetChannel()		(systime_ch)
 
-static uint64_t __SysTime_GetTickUS(void) {	return TIMER_GetTickUS(SysTime_GetChannel()); }
-static void __SysTime_Delay(int ms) { TIMER_Delay(SysTime_GetChannel(), ms); }
+static uint64_t __SysTime_GetTickUS(void)
+{
+	return TIMER_GetTickUS(SysTime_GetChannel());
+}
+
+static void __SysTime_Delay(int ms)
+{
+	TIMER_Delay(SysTime_GetChannel(), ms);
+}
 
 static SysTime_Op Timer_Op __attribute__((unused)) = {
 	.GetTickUS = __SysTime_GetTickUS,

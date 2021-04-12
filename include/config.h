@@ -14,7 +14,8 @@
 //////////////////////////////////////////////////////////////////////////////////////
 #define SYSTEM_TIME_SYSTICK 	0
 #define SYSTEM_TIME_TIMER 		1
-#define SYSTEM_TIME_MODULE		SYSTEM_TIME_TIMER
+#define SYSTEM_TIME_MODULE		SYSTEM_TIME_TIMER	/* set SYSTEM_TIME_SYSTICK or SYSTEM_TIME_TIMER */
+
 #define CLI_ENABLED
 #define CMD_ENABLED
 #define CONSOLE_ENABLED
