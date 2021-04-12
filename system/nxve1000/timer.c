@@ -46,64 +46,57 @@ struct TIMER_t {
 	uint32_t lastdec;
 };
 
-static struct TIMER_t timer_t[TIMER_CHS];
-static struct TIMER_t *systimer = NULL;
+static struct TIMER_t _timer[TIMER_CHS];
 
-static uint64_t TIMER_GetTickUS(void)
+uint64_t TIMER_GetTickUS(int ch)
 {
-	uint64_t time = systimer->timestamp;
-	uint32_t lastdec = systimer->lastdec;
-	uint32_t now = TIMER_MAX_COUNT - readl(&systimer->base->TCNTO);
+	uint64_t time = _timer[ch].timestamp;
+	uint32_t lastdec = _timer[ch].lastdec;
+	uint32_t now = TIMER_MAX_COUNT - readl(&_timer[ch].base->TCNTO);
 
 	if (now >= lastdec)
 		time += now - lastdec;
 	else
 		time += now + TIMER_MAX_COUNT - lastdec;
 
-	systimer->lastdec = now;
-	systimer->timestamp = time;
+	_timer[ch].lastdec = now;
+	_timer[ch].timestamp = time;
 
-	return systimer->timestamp;
+	return _timer[ch].timestamp;
 }
 
-static void TIMER_Delay(int ms)
+void TIMER_Delay(int ch, int ms)
 {
-	uint64_t end = TIMER_GetTickUS() + (uint64_t)ms * 1000;
+	uint64_t end = TIMER_GetTickUS(ch) + (uint64_t)ms * 1000;
 
-	while (TIMER_GetTickUS() < end) {
+	while (TIMER_GetTickUS(ch) < end) {
 			;
 	};
 }
 
-static SysTime_Op SysTick_Op __attribute__((unused)) = {
-	.Delay = TIMER_Delay,
-	.GetTickUS = TIMER_GetTickUS,
-};
-
-static void TIMER_Config(int ch, int mux, int scale, unsigned int count)
+static void TIMER_Frequency(int ch, int mux, int scale, unsigned int count)
 {
-	struct TIMER_t *timer = &timer_t[ch];
+	struct TIMER_t *timer = &_timer[ch];
 
-	writel(_mask(timer->base->TCFG1, TCFG1_MUX_MASK) | (uint32_t)mux, &timer->base->TCFG1);
-	writel(_mask(timer->base->TCFG0, TCFG0_PRESCALER_MASK) | (uint32_t)(scale - 1), &timer->base->TCFG0);
+	writel(_mask(timer->base->TCFG1, TCFG1_MUX_MASK) |
+			(uint32_t)mux, &timer->base->TCFG1);
+	writel(_mask(timer->base->TCFG0, TCFG0_PRESCALER_MASK) |
+			(uint32_t)(scale - 1), &timer->base->TCFG0);
 	writel(count, &timer->base->TCNTB);
 	writel(count, &timer->base->TCMPB);
 }
 
-static void TIMER_Start(int ch, bool irqenb)
+void TIMER_Start(int ch)
 {
-	struct TIMER_t *timer = &timer_t[ch];
-
-	if (irqenb)
-		writel(TINT_STATUS | TINT_ENABLE, &timer->base->TINT_CSTAT);
+	struct TIMER_t *timer = &_timer[ch];
 
 	writel((readl(&timer->base->TCON) | TCON_MANUALUPDATE), &timer->base->TCON);
 	writel(TCON_AUTORELOAD | TCON_START, &timer->base->TCON);
 }
 
-static void TIMER_Stop(int ch)
+void TIMER_Stop(int ch)
 {
-	struct TIMER_t *timer = &timer_t[ch];
+	struct TIMER_t *timer = &_timer[ch];
 
 	writel(0x0, &timer->base->TINT_CSTAT);
 	writel(_mask(timer->base->TCON, TCON_START), &timer->base->TCON);
@@ -111,9 +104,8 @@ static void TIMER_Stop(int ch)
 
 int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz __attribute__((unused)))
 {
-	struct TIMER_t *timer = &timer_t[ch];
+	struct TIMER_t *timer = &_timer[ch];
 	unsigned int count = TIMER_MAX_COUNT;
-	bool irqenb = false;
 	int scale = (int)infreq / TIMER_CLOCK_HZ;
 	
 	if (ch > 7)
@@ -124,21 +116,32 @@ int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz __attribu
 		scale = (int)(infreq / tfreq);
 
 	TIMER_Stop(ch);
-	TIMER_Config(ch, TIMER_MUX_SEL, scale, count);
-	TIMER_Start(ch, irqenb);
+	TIMER_Frequency(ch, TIMER_MUX_SEL, scale, count);
 
 	return 0;
 }
+
+static int systime_ch;
+#define SysTime_Channel(_ch)		(systime_ch = _ch)
+#define SysTime_GetChannel()		(systime_ch)
+
+static uint64_t __SysTime_GetTickUS(void) {	return TIMER_GetTickUS(SysTime_GetChannel()); }
+static void __SysTime_Delay(int ms) { TIMER_Delay(SysTime_GetChannel(), ms); }
+
+static SysTime_Op Timer_Op __attribute__((unused)) = {
+	.GetTickUS = __SysTime_GetTickUS,
+	.Delay = __SysTime_Delay,
+};
 
 void TIMER_Register(int ch, unsigned int infreq, unsigned int tfreq, int hz)
 {
 	if (ch < 0 || ch > TIMER_CHS)
 		return;
 
+	SysTime_Channel(ch);
+	SysTime_Register(&Timer_Op);
+
 	TIMER_Init(ch, infreq, tfreq, hz);
-
-	systimer = &timer_t[ch];
-
-	SysTime_Register(&SysTick_Op);
+	TIMER_Start(ch);
 }
 #endif  /* TIMER_ENABLED */
