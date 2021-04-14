@@ -8,6 +8,13 @@
 
 #ifdef TIMER_ENABLED
 
+#ifndef TIMER_CLOCK_HZ
+#define TIMER_CLOCK_HZ				1000000		/* 1Mhz */
+#endif
+#ifndef TIMER_CLOCK_PERIODIC_HZ
+#define TIMER_CLOCK_PERIODIC_HZ		16000000	/* 16Mhz for the 48Mhz, support (input clock) * 1/3 */
+#endif
+
 #define TIMER_CHS				8
 #define	TIMER_MAX_COUNT			-(1UL)
 #define TIMER_MUX_SEL			0 				/* bypass */
@@ -41,14 +48,16 @@ static struct TIMER_t {
 	Timer_Reg *base;
 	uint64_t timestamp;
 	uint32_t lastdec;
-	uint32_t ratio;
+	uint32_t infreq;
+	uint32_t tfreq;
+	TIMER_MODE_t mode;
 } _timer[TIMER_CHS] = { };
 
-uint64_t TIMER_GetTickUS(int ch)
+uint64_t TIMER_GetTimeUS(int ch)
 {
 	uint64_t time = _timer[ch].timestamp;
 	uint32_t lastdec = _timer[ch].lastdec;
-	uint32_t now = (TIMER_MAX_COUNT - readl(&_timer[ch].base->TCNTO)) / _timer[ch].ratio;
+	uint32_t now = (TIMER_MAX_COUNT - readl(&_timer[ch].base->TCNTO));
 
 	if (now >= lastdec)
 		time += now - lastdec;
@@ -63,24 +72,33 @@ uint64_t TIMER_GetTickUS(int ch)
 
 void TIMER_Delay(int ch, int ms)
 {
-	uint64_t end = TIMER_GetTickUS(ch) + (uint64_t)ms * 1000;
+	uint64_t end = TIMER_GetTimeUS(ch) + (uint64_t)ms * 1000;
 
-	while (TIMER_GetTickUS(ch) < end) {
+	while (TIMER_GetTimeUS(ch) < end) {
 			;
 	};
 }
 
-void TIMER_Frequency(int ch, int mux, int scale,
-							unsigned int count, unsigned int cmp)
+void TIMER_Frequency(int ch, int hz, int duty)
 {
 	struct TIMER_t *timer = &_timer[ch];
+	unsigned int scale = (timer->infreq / timer->tfreq) - 1;
+	unsigned int count, cmparator;
 
-	writel(_mask(timer->base->TCFG1, TCFG1_MUX_MASK) |
-			(uint32_t)mux, &timer->base->TCFG1);
-	writel(_mask(timer->base->TCFG0, TCFG0_PRESCALER_MASK) |
-			(uint32_t)(scale - 1), &timer->base->TCFG0);
+	if (timer->mode == TIMER_MODE_FREERUN) {
+		count = TIMER_MAX_COUNT;
+		cmparator = TIMER_MAX_COUNT;
+	} else {
+		count = timer->tfreq / (unsigned int)hz;
+		cmparator = count / (100 / (unsigned int)duty); /* percent to comparator */
+	}
+
+	writel(_mask(timer->base->TCON, TCON_INVERT) |
+			(timer->mode == TIMER_MODE_PWM_INVERT ? TCON_INVERT : 0), &timer->base->TCON);
+	writel(_mask(timer->base->TCFG1, TCFG1_MUX_MASK) | TIMER_MUX_SEL, &timer->base->TCFG1);
+	writel(_mask(timer->base->TCFG0, TCFG0_PRESCALER_MASK) | scale, &timer->base->TCFG0);
 	writel(count, &timer->base->TCNTB);
-	writel(cmp, &timer->base->TCMPB);
+	writel(cmparator, &timer->base->TCMPB);
 }
 
 void TIMER_Start(int ch)
@@ -99,49 +117,52 @@ void TIMER_Stop(int ch)
 	writel(_mask(timer->base->TCON, TCON_START), &timer->base->TCON);
 }
 
-int TIMER_Init(int ch, unsigned int infreq, unsigned int tfreq, int hz)
+int TIMER_Init(int ch, unsigned int infreq, TIMER_MODE_t mode)
 {
 	struct TIMER_t *timer = &_timer[ch];
-	unsigned int count = TIMER_MAX_COUNT;
-	int scale = (int)(infreq / tfreq);
 
 	timer->base = (void *)(TIMER_PHY_BASE + (TIMER_CH_OFFSET * ch));
-	timer->ratio = tfreq / ((unsigned int)hz * 1000);
+	timer->mode = mode;
+	timer->infreq = infreq;
 
-	TIMER_Stop(ch);
-	TIMER_Frequency(ch, TIMER_MUX_SEL, scale, count, count);
+	if (mode == TIMER_MODE_FREERUN)
+		timer->tfreq = TIMER_CLOCK_HZ;
+	else
+		timer->tfreq = TIMER_CLOCK_PERIODIC_HZ;
 
 	return 0;
 }
 
 static int systime_ch;
-#define SysTime_Channel(_ch)		(systime_ch = _ch)
-#define SysTime_GetChannel()		(systime_ch)
+#define SYSTIME_SET_Ch(_ch)		(systime_ch = _ch)
+#define SYSTIME_GET_Ch()		(systime_ch)
 
-static uint64_t __SysTime_GetTickUS(void)
+static uint64_t __SysTime_GetTimeUS(void)
 {
-	return TIMER_GetTickUS(SysTime_GetChannel());
+	return TIMER_GetTimeUS(SYSTIME_GET_Ch());
 }
 
 static void __SysTime_Delay(int ms)
 {
-	TIMER_Delay(SysTime_GetChannel(), ms);
+	TIMER_Delay(SYSTIME_GET_Ch(), ms);
 }
 
 static SysTime_Op Timer_Op = {
-	.GetTickUS = __SysTime_GetTickUS,
+	.GetTimeUS = __SysTime_GetTimeUS,
 	.Delay = __SysTime_Delay,
 };
 
-void TIMER_Register(int ch, unsigned int infreq, unsigned int tfreq, int hz)
+void TIMER_Register(int ch, unsigned int infreq, int hz, TIMER_MODE_t mode, SysTime_Op *op)
 {
-	if (ch < 0 || ch > TIMER_CHS)
-		return;
+	if (op) {
+		SysTime_Register(op);
+	} else {
+		SYSTIME_SET_Ch(ch);
+		SysTime_Register(&Timer_Op);
+	}
 
-	SysTime_Channel(ch);
-	SysTime_Register(&Timer_Op);
-
-	TIMER_Init(ch, infreq, tfreq, hz);
+	TIMER_Init(ch, infreq, mode);
+	TIMER_Frequency(ch, hz, 100);
 	TIMER_Start(ch);
 }
 #endif  /* TIMER_ENABLED */

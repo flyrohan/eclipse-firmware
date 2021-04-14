@@ -21,10 +21,16 @@
 #define CONSOLE_ENABLED
 
 //////////////////////////////////////////////////////////////////////////////////////
-// Module Enable
+// Modules Enable
+//
+// - SYSTICK_ENABLED
+// - TIMER_ENABLED
+// - REMAP_ENABLED
+// - PLL_ENABLED
+// - UART_ENABLED
+// - GPIO_ENABLED
 //////////////////////////////////////////////////////////////////////////////////////
 #define TIMER_ENABLED
-//#define SYSTICK_ENABLED
 #define REMAP_ENABLED
 #define PLL_ENABLED
 #define UART_ENABLED
@@ -33,10 +39,11 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // System Configure
 //////////////////////////////////////////////////////////////////////////////////////
-#define SYSTEM_CLOCK		48000000
-#define SYSTEM_TICK_HZ		1000
-#define TIMER_CH			(0)
-#define TIMER_CLOCK_HZ		1000000			/* 1Mhz */
+#define SYSTEM_CLOCK			48000000
+#define SYSTEM_TICK_HZ			1000
+#define TIMER_CH				(0)
+#define TIMER_CLOCK_HZ			1000000			/* 1Mhz */
+#define TIMER_CLOCK_PERIODIC_HZ	16000000		/* 16Mhz */
 #define UART_CHANNEL		0
 #define CLI_BUFFER_SIZE 	32
 #define CMD_BUFFER_SIZE		32
