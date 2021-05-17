@@ -8,7 +8,7 @@
 #define readl(_a)						(*(volatile uint32_t *)(_a))
 #define writel(_v, _a)					(*(volatile uint32_t *)(_a) = (_v))
 
-#define _mask(_v, _m)					(_v & ~(uint32_t)_m)
+#define _maskbit(_v, _m)				(_v & ~(uint32_t)_m)
 #define _maskbit(_p, _w)              	(((1 << _w) - 1) << _p)
 #define _getsftbit(_d, _p, _w)       	(((_d) & _maskbit(_p, _w)) >> _p)
 #define _clrsetbit(_d, _p, _w, _v)		(((_d) & (uint32_t)~_maskbit(_p, _w)) | \

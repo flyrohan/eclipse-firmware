@@ -93,10 +93,10 @@ void TIMER_Frequency(int ch, int hz, int duty)
 		cmparator = count / (100 / (unsigned int)duty); /* percent to comparator */
 	}
 
-	writel(_mask(timer->base->TCON, TCON_INVERT) |
+	writel(_maskbit(timer->base->TCON, TCON_INVERT) |
 			(timer->mode == TIMER_MODE_PWM_INVERT ? TCON_INVERT : 0), &timer->base->TCON);
-	writel(_mask(timer->base->TCFG1, TCFG1_MUX_MASK) | TIMER_MUX_SEL, &timer->base->TCFG1);
-	writel(_mask(timer->base->TCFG0, TCFG0_PRESCALER_MASK) | scale, &timer->base->TCFG0);
+	writel(_maskbit(timer->base->TCFG1, TCFG1_MUX_MASK) | TIMER_MUX_SEL, &timer->base->TCFG1);
+	writel(_maskbit(timer->base->TCFG0, TCFG0_PRESCALER_MASK) | scale, &timer->base->TCFG0);
 	writel(count, &timer->base->TCNTB);
 	writel(cmparator, &timer->base->TCMPB);
 }
@@ -114,7 +114,7 @@ void TIMER_Stop(int ch)
 	struct TIMER_t *timer = &_timer[ch];
 
 	writel(0x0, &timer->base->TINT_CSTAT);
-	writel(_mask(timer->base->TCON, TCON_START), &timer->base->TCON);
+	writel(_maskbit(timer->base->TCON, TCON_START), &timer->base->TCON);
 }
 
 int TIMER_Init(int ch, unsigned int infreq, TIMER_MODE_t mode)
