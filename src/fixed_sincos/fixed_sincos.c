@@ -17,7 +17,9 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // ===================================================================
-
+//
+// Original is 'https://github.com/dsnet/tri-approx'
+//
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
